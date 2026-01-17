@@ -10,6 +10,58 @@ A simple Library Backend REST API built with Django REST Framework, PostgreSQL, 
 - CI/CD with GitHub Actions
 - Production-ready configuration
 
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment.
+
+### Pipeline Overview
+
+- **CI Workflow** (`.github/workflows/ci.yml`):
+  - Runs on every push and pull request to `main`/`master` branches
+  - Sets up PostgreSQL service
+  - Runs Django tests with migrations
+  - Validates code quality and functionality
+
+- **CD Workflow** (`.github/workflows/cd.yml`):
+  - Triggers automatically after CI workflow completes successfully
+  - Deploys the application to Oracle Cloud VM via SSH
+  - Pulls latest code, rebuilds, and restarts Docker containers
+
+### Verifying CI/CD Pipeline Status
+
+To check if the CI/CD pipeline is fully working:
+
+1. **Check GitHub Actions**:
+   - Go to your GitHub repository
+   - Click on the "Actions" tab
+   - Verify that:
+     - CI workflow shows ✅ (green checkmark) after a recent push/PR
+     - CD workflow shows ✅ (green checkmark) after CI completes
+     - Both workflows run without errors
+
+2. **Verify CI Pipeline**:
+   - Push a commit or create a PR to trigger CI
+   - Check that the "test" job completes successfully
+   - All tests should pass with exit code 0
+
+3. **Verify CD Pipeline**:
+   - After CI succeeds, check that CD workflow starts automatically
+   - CD workflow should:
+     - Complete the "deploy" job successfully
+     - SSH into Oracle VM and run deployment commands
+     - Exit without errors
+
+4. **Test Deployment** (on Oracle VM):
+   - SSH into your Oracle VM
+   - Check that containers are running: `docker compose ps`
+   - Verify API is accessible: `curl http://localhost:8000/api/authors/`
+   - Check logs for errors: `docker compose logs api`
+
+**Note**: Ensure GitHub Secrets are configured for CD workflow:
+- `OCI_HOST` - Oracle Cloud VM hostname/IP
+- `OCI_USER` - SSH username
+- `OCI_SSH_KEY` - Private SSH key for authentication
+
 ## API Endpoints
 
 ### Authors
