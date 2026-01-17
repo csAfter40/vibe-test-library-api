@@ -28,6 +28,43 @@ class AuthorTests(TestCase):
         self.assertEqual(response.data[0]['name'], 'George R.R. Martin')  # Ordered by name
         self.assertEqual(response.data[1]['name'], 'J.K. Rowling')
 
+    def test_get_author(self):
+        """Test retrieving a single author"""
+        author = Author.objects.create(name="J.K. Rowling")
+
+        response = self.client.get(f"/api/authors/{author.id}/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], "J.K. Rowling")
+        self.assertEqual(response.data["id"], author.id)
+
+    def test_update_author(self):
+        """Test updating an author"""
+        author = Author.objects.create(name="J.K. Rowling")
+
+        data = {"name": "Joanne Rowling"}
+        response = self.client.put(f"/api/authors/{author.id}/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        author.refresh_from_db()
+        self.assertEqual(author.name, "Joanne Rowling")
+
+    def test_partial_update_author(self):
+        """Test partially updating an author"""
+        author = Author.objects.create(name="J.K. Rowling")
+
+        data = {"name": "Joanne Rowling"}
+        response = self.client.patch(f"/api/authors/{author.id}/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        author.refresh_from_db()
+        self.assertEqual(author.name, "Joanne Rowling")
+
+    def test_delete_author(self):
+        """Test deleting an author"""
+        author = Author.objects.create(name="J.K. Rowling")
+
+        response = self.client.delete(f"/api/authors/{author.id}/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Author.objects.count(), 0)
+
 
 class BookTests(TestCase):
     def setUp(self):
@@ -70,3 +107,59 @@ class BookTests(TestCase):
         # Ordered by title
         self.assertEqual(response.data[0]['title'], 'A Game of Thrones')
         self.assertEqual(response.data[1]['title'], 'Harry Potter and the Philosopher\'s Stone')
+
+    def test_get_book(self):
+        """Test retrieving a single book"""
+        book = Book.objects.create(
+            title="Harry Potter and the Philosopher's Stone",
+            author=self.author,
+            published_year=1997,
+        )
+
+        response = self.client.get(f"/api/books/{book.id}/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data["title"], "Harry Potter and the Philosopher's Stone"
+        )
+        self.assertEqual(response.data["id"], book.id)
+        self.assertEqual(response.data["author"], self.author.id)
+
+    def test_update_book(self):
+        """Test updating a book"""
+        book = Book.objects.create(
+            title="Harry Potter", author=self.author, published_year=1997
+        )
+
+        data = {
+            "title": "Harry Potter and the Philosopher's Stone",
+            "author": self.author.id,
+            "published_year": 1997,
+        }
+        response = self.client.put(f"/api/books/{book.id}/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        book.refresh_from_db()
+        self.assertEqual(book.title, "Harry Potter and the Philosopher's Stone")
+
+    def test_partial_update_book(self):
+        """Test partially updating a book"""
+        book = Book.objects.create(
+            title="Harry Potter", author=self.author, published_year=1997
+        )
+
+        data = {"title": "Harry Potter and the Philosopher's Stone"}
+        response = self.client.patch(f"/api/books/{book.id}/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        book.refresh_from_db()
+        self.assertEqual(book.title, "Harry Potter and the Philosopher's Stone")
+
+    def test_delete_book(self):
+        """Test deleting a book"""
+        book = Book.objects.create(
+            title="Harry Potter and the Philosopher's Stone",
+            author=self.author,
+            published_year=1997,
+        )
+
+        response = self.client.delete(f"/api/books/{book.id}/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Book.objects.count(), 0)

@@ -12,10 +12,60 @@ A simple Library Backend REST API built with Django REST Framework, PostgreSQL, 
 
 ## API Endpoints
 
+### Authors
+
 - `GET /api/authors/` - List all authors
 - `POST /api/authors/` - Create a new author
+- `GET /api/authors/{id}/` - Retrieve a specific author
+- `PUT /api/authors/{id}/` - Update an author (full update)
+- `PATCH /api/authors/{id}/` - Partially update an author
+- `DELETE /api/authors/{id}/` - Delete an author
+
+### Books
+
 - `GET /api/books/` - List all books
 - `POST /api/books/` - Create a new book
+- `GET /api/books/{id}/` - Retrieve a specific book
+- `PUT /api/books/{id}/` - Update a book (full update)
+- `PATCH /api/books/{id}/` - Partially update a book
+- `DELETE /api/books/{id}/` - Delete a book
+
+### Example Requests
+
+**Create an Author:**
+```bash
+curl -X POST http://localhost:8000/api/authors/ \
+  -H "Content-Type: application/json" \
+  -d '{"name": "J.K. Rowling"}'
+```
+
+**Get an Author:**
+```bash
+curl http://localhost:8000/api/authors/1/
+```
+
+**Update an Author:**
+```bash
+curl -X PATCH http://localhost:8000/api/authors/1/ \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Joanne Rowling"}'
+```
+
+**Delete an Author:**
+```bash
+curl -X DELETE http://localhost:8000/api/authors/1/
+```
+
+**Create a Book:**
+```bash
+curl -X POST http://localhost:8000/api/books/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Harry Potter and the Philosopher\'s Stone",
+    "author": 1,
+    "published_year": 1997
+  }'
+```
 
 ## Local Development
 
