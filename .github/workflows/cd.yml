@@ -1,5 +1,9 @@
 name: CD
 
+run-name: >
+  Deploy to Oracle VM —
+  ${{ github.event.workflow_run.head_commit.message }}
+
 on:
   workflow_run:
     workflows: ["CI"]   # must match CI workflow name exactly
