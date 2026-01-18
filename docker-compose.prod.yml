@@ -3,7 +3,7 @@ services:
     volumes:
       - static_volume:/app/staticfiles
     command: >
-      gunicorn config.wsgi:application
+      gunicorn library.wsgi:application
       --bind 0.0.0.0:8000
       --workers 3
       --timeout 120
@@ -11,5 +11,5 @@ services:
       - "8000:8000"
     environment:
       DEBUG: "0"
-      # DJANGO_SETTINGS_MODULE: config.settings.prod
+      # DJANGO_SETTINGS_MODULE: library.settings.prod
     restart: always
