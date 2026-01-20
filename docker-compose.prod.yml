@@ -2,6 +2,7 @@ services:
   api:
     volumes:
       - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
     command: >
       gunicorn library.wsgi:application
       --bind 0.0.0.0:8000
@@ -12,4 +13,17 @@ services:
     environment:
       DEBUG: "0"
       # DJANGO_SETTINGS_MODULE: library.settings.prod
+    restart: always
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/staticfiles
+      - media_volume:/mediafiles
     restart: always
